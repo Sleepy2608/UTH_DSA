@@ -1,98 +1,100 @@
-# Maze Solver Project Documentation
+# Tài liệu Dự án Maze Solver (Giải Mê Cung)
 
-## Project Overview
-This project is a C++ Maze Solver using **Raylib** for visualization. It is designed to demonstrate Object-Oriented Programming (OOP) principles, Data Structures and Algorithms (DFS for generation), and game development basics.
+## Tổng quan Dự án
+Dự án này là chương trình Giải Mê Cung bằng C++ sử dụng **Raylib** để hiển thị đồ họa. Dự án được thiết kế để minh họa các nguyên tắc Lập trình Hướng đối tượng (OOP), Cấu trúc Dữ liệu và Giải thuật (DFS để sinh mê cung), và cơ bản về phát triển game.
 
-## Project Status
+## Trạng thái Dự án
 
-### Implemented Features
-- [x] **Maze Data Structures**: `Cell` struct and `Maze` class.
-- [x] **Maze Generation**: Randomized Depth-First Search (DFS) algorithm (Iterative Backtracker).
-    - Ensures a perfect maze (one unique path between any two points).
-    - Generates Start (Top-Left) and End (Bottom-Right) openings.
-- [x] **Visualization**:
-    - Renders maze walls using Raylib.
-    - Thickened outer boundaries (5.0f) for better visibility.
-    - Standard inner walls (2.0f).
-- [x] **Game Loop**:
-    - Infinite loop handling updates and drawing.
-    - **Control**: Press `R` to regenerate the maze instantly.
+### Các tính năng đã hoàn thành
+- [x] **Cấu trúc Dữ liệu Mê cung**: Struct `Cell` và Class `Maze`.
+- [x] **Sinh Mê cung**: Thuật toán Tìm kiếm theo chiều sâu (DFS) ngẫu nhiên (Iterative Backtracker).
+    - Đảm bảo tạo ra mê cung hoàn hảo (có duy nhất một đường đi giữa hai điểm bất kỳ).
+    - Tạo lối vào (Góc trên trái) và lối ra (Góc dưới phải).
+- [x] **Hiển thị**:
+    - Vẽ các bức tường mê cung bằng Raylib.
+    - Viền ngoài được làm dày (5.0f) để dễ nhìn hơn.
+    - Tường bên trong có độ dày chuẩn (2.0f).
+    - **Màu sắc**: Ô Bắt đầu màu Vàng, ô Đích màu Xanh lá.
+- [x] **Vòng lặp Game**:
+    - Vòng lặp vô hạn xử lý cập nhật và vẽ.
+    - **Điều khiển**: Nhấn phím `R` để tạo lại mê cung mới ngay lập tức.
 
-### Pending Features (To-Do)
-- [ ] **Player Control (Mode 1)**:
-    - Allow user to move a character/marker using arrow keys.
-    - Collision detection with walls.
-    - Victory condition when reaching the exit.
-- [ ] **Auto Solve (Mode 2)**:
-    - Implement a pathfinding algorithm (BFS, DFS, or A*) to solve the maze.
-    - Visualize the solution path.
+### Các tính năng đang chờ (Cần làm)
+- [ ] **Điều khiển của người chơi (Chế độ 1)**:
+    - Cho phép người dùng di chuyển nhân vật/điểm đánh dấu bằng các phím mũi tên.
+    - Phát hiện va chạm với tường (không đi xuyên tường).
+    - Điều kiện chiến thắng khi đến đích.
+- [ ] **Tự động giải (Chế độ 2)**:
+    - Cài đặt thuật toán tìm đường (BFS, DFS, hoặc A*) để giải mê cung.
+    - Hiển thị đường đi giải pháp trên màn hình.
 
 ---
 
-## Code Documentation
+## Tài liệu Mã nguồn
 
 ### File: `maze.h` & `maze.cpp`
 
 #### Struct `Cell`
-Represents a single unit in the maze grid.
-- **Variables**:
-    - `int row, col`: Coordinates of the cell in the grid.
-    - `bool visited`: Flag used during generation to track visited cells.
-    - `bool walls[4]`: Array representing the 4 walls of the cell.
-        - Index `0`: Top Wall
-        - Index `1`: Right Wall
-        - Index `2`: Bottom Wall
-        - Index `3`: Left Wall
-        - `true` means the wall exists, `false` means it is open.
+Đại diện cho một ô đơn vị trong lưới mê cung.
+- **Biến thành viên**:
+    - `int row, col`: Tọa độ của ô trong lưới.
+    - `bool visited`: Cờ đánh dấu để theo dõi các ô đã được thăm trong quá trình sinh mê cung.
+    - `bool walls[4]`: Mảng đại diện cho 4 bức tường của ô.
+        - Chỉ số `0`: Tường Trên (Top)
+        - Chỉ số `1`: Tường Phải (Right)
+        - Chỉ số `2`: Tường Dưới (Bottom)
+        - Chỉ số `3`: Tường Trái (Left)
+        - `true` nghĩa là có tường, `false` nghĩa là tường đã mở.
 
 #### Class `Maze`
-Manages the grid and operations.
-- **Variables**:
-    - `int rows`: Number of rows in the maze.
-    - `int cols`: Number of columns in the maze.
-    - `std::vector<std::vector<Cell>> grid`: 2D container for all `Cell` objects.
+Quản lý lưới và các hoạt động của mê cung.
+- **Biến thành viên**:
+    - `int rows`: Số hàng của mê cung.
+    - `int cols`: Số cột của mê cung.
+    - `std::vector<std::vector<Cell>> grid`: Container 2D chứa tất cả các đối tượng `Cell`.
 
-- **Methods**:
-    - `Maze(int rows, int cols)`: Constructor. Initializes the grid with all walls intact and unvisited cells.
+- **Phương thức**:
+    - `Maze(int rows, int cols)`: Hàm khởi tạo (Constructor). Khởi tạo lưới với tất cả các bức tường đều đóng và chưa được thăm.
     - `void GenerateMaze()`:
-        - Uses a `std::stack` for the **Iterative DFS** algorithm.
-        - Starts at (0,0).
-        - Randomly visits unvisited neighbors, removing walls between them.
-        - Backtracks when no unvisited neighbors exist.
-        - Opens `walls[0]` at (0,0) for Entry and `walls[2]` at (`rows`-1, `cols`-1) for Exit.
+        - Sử dụng `std::stack` cho thuật toán **DFS Lặp (Iterative DFS)**.
+        - Bắt đầu tại (0,0).
+        - Ngẫu nhiên thăm các ô lân cận chưa được thăm, loại bỏ tường giữa chúng.
+        - Quay lui (Backtrack) khi không còn ô lân cận nào chưa thăm.
+        - Mở `walls[0]` tại (0,0) làm Lối vào và `walls[2]` tại (`rows`-1, `cols`-1) làm Lối ra.
     - `void Draw(int screenWidth, int screenHeight)`:
-        - Calculates `cellWidth` and `cellHeight` based on screen quantity.
-        - Iterates through the grid and calls `DrawLineEx` (Raylib) to draw existing walls.
-        - Uses thicker lines for maze boundaries.
-    - `void ResetVisited()`: Resets the `visited` flag of all cells (useful ensuring pathfinding algorithms run correctly later).
+        - Tính toán `cellWidth` (chiều rộng ô) và `cellHeight` (chiều cao ô) dựa trên kích thước màn hình.
+        - Duyệt qua lưới và gọi `DrawLineEx` (Raylib) để vẽ các bức tường đang tồn tại.
+        - Vẽ ô Bắt đầu màu Vàng và ô Đích màu Xanh lá.
+        - Sử dụng nét vẽ dày hơn cho biên giới hạn của mê cung.
+    - `void ResetVisited()`: Đặt lại cờ `visited` của tất cả các ô về `false` (hữu ích để đảm bảo thuật toán tìm đường chạy đúng sau này).
     - `Cell* GetUnvisitedNeighbor(Cell* cell)`:
-        - Checks 4 cardinal directions for neighbors within bounds that have not been visited.
-        - Returns a random pointer to one of them, or `nullptr` if none exist.
+        - Kiểm tra 4 hướng chính xem có ô lân cận nào nằm trong giới hạn và chưa được thăm không.
+        - Trả về con trỏ ngẫu nhiên đến một trong các ô đó, hoặc `nullptr` nếu không có.
     - `void RemoveWalls(Cell* current, Cell* next)`:
-        - Calculates direction between `current` and `next` cells.
-        - Sets the corresponding wall booleans to `false` for both cells.
+        - Tính toán hướng đi giữa ô `current` (hiện tại) và ô `next` (tiếp theo).
+        - Đặt biến tường tương ứng thành `false` cho cả hai ô.
 
 ### File: `main.cpp`
 
-#### Function `main()`
-Entry point of the program.
-- **Constants**:
-    - `screenWidth`, `screenHeight`: Window dimensions (set to 800x800).
-- **Flow**:
-    1.  `InitWindow(...)`: Starts Raylib context.
-    2.  `Maze maze(20, 20)`: Creates a 20x20 maze object.
-    3.  `maze.GenerateMaze()`: Generates the initial layout.
-    4.  `while (!WindowShouldClose())`: Main game loop.
-        - **Input**: Checks `IsKeyPressed(KEY_R)` to re-run constructor and generation.
-        - **Rendering**:
+#### Hàm `main()`
+Điểm bắt đầu của chương trình.
+- **Hằng số**:
+    - `screenWidth`, `screenHeight`: Kích thước cửa sổ (đặt là 800x800).
+- **Luồng xử lý**:
+    1.  `InitWindow(...)`: Khởi tạo ngữ cảnh Raylib.
+    2.  `Maze maze(20, 20)`: Tạo một đối tượng mê cung kích thước 20x20.
+    3.  `maze.GenerateMaze()`: Sinh cấu trúc mê cung ban đầu.
+    4.  `while (!WindowShouldClose())`: Vòng lặp game chính.
+        - **Input**: Kiểm tra `IsKeyPressed(KEY_R)` để chạy lại hàm khởi tạo và sinh lại mê cung.
+        - **Rendering (Vẽ)**:
             - `BeginDrawing()` / `EndDrawing()`.
             - `ClearBackground(RAYWHITE)`.
             - `maze.Draw(...)`.
-            - `DrawText(...)` for UI instructions.
+            - `DrawText(...)` để hiển thị hướng dẫn.
 
-## Build Instructions
-Run the provided batch script:
+## Hướng dẫn Build (Biên dịch)
+Chạy script batch đã được cung cấp:
 ```cmd
 build.bat
 ```
-This compiles `main.cpp` and `maze.cpp` with Raylib included.
+Script này sẽ biên dịch `main.cpp` và `maze.cpp` có liên kết với thư viện Raylib.

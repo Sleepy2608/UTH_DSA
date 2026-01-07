@@ -45,6 +45,12 @@ void Maze::Draw(int screenWidth, int screenHeight) {
             float x = j * cellWidth;
             float y = i * cellHeight;
             
+            if (i == 0 && j == 0) {
+                DrawRectangle(x, y, cellWidth, cellHeight, YELLOW);
+            } else if (i == rows - 1 && j == cols - 1) {
+                DrawRectangle(x, y, cellWidth, cellHeight, GREEN);
+            }
+            
             float thick = 2.0f;
             float boundaryThick = 5.0f;
 
