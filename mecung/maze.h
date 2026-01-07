@@ -7,6 +7,8 @@
 #include <ctime>
 #include "raylib.h"
 
+using namespace std;
+
 struct Cell {
     int row;
     int col;
@@ -25,7 +27,7 @@ class Maze {
 private:
     int rows;
     int cols;
-    std::vector<std::vector<Cell>> grid;
+    vector<vector<Cell>> grid;
 
 public:
     Maze(int rows, int cols);
@@ -35,7 +37,7 @@ public:
     
     int GetRows() const { return rows; }
     int GetCols() const { return cols; }
-    const std::vector<std::vector<Cell>>& GetGrid() const { return grid; }
+    const vector<vector<Cell>>& GetGrid() const { return grid; }
     
 private:
     Cell* GetUnvisitedNeighbor(Cell* cell);

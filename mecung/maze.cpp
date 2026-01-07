@@ -4,17 +4,17 @@
 
 Maze::Maze(int r, int c) : rows(r), cols(c) {
     for (int i = 0; i < rows; ++i) {
-        std::vector<Cell> row;
+        vector<Cell> row;
         for (int j = 0; j < cols; ++j) {
             row.emplace_back(i, j);
         }
         grid.push_back(row);
     }
-    std::srand(std::time(nullptr));
+    srand(time(nullptr));
 }
 
 void Maze::GenerateMaze() {
-    std::stack<Cell*> stack;
+    stack<Cell*> stack;
     Cell* current = &grid[0][0];
     current->visited = true;
     stack.push(current);
@@ -71,7 +71,7 @@ void Maze::Draw(int screenWidth, int screenHeight) {
 }
 
 Cell* Maze::GetUnvisitedNeighbor(Cell* cell) {
-    std::vector<Cell*> neighbors;
+    vector<Cell*> neighbors;
     int r = cell->row;
     int c = cell->col;
 
@@ -89,7 +89,7 @@ Cell* Maze::GetUnvisitedNeighbor(Cell* cell) {
     }
 
     if (!neighbors.empty()) {
-        int index = std::rand() % neighbors.size();
+        int index = rand() % neighbors.size();
         return neighbors[index];
     }
 
