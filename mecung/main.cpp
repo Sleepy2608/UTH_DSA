@@ -13,26 +13,39 @@ int main() {
 
     SetTargetFPS(60);
 
+    // Toggle flags để kiểm soát hiển thị path
+    bool showDFSPath = false;
+    bool showBFSPath = false;
+
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_R)) {
             maze = Maze(10, 10); 
             maze.GenerateMaze();
+            // Reset toggle khi tạo maze mới
+            showDFSPath = false;
+            showBFSPath = false;
         }
         
-        // Phím S: Giải bằng DFS (màu xanh dương)
+        // Phím S: Toggle DFS path (màu xanh dương)
         if (IsKeyPressed(KEY_S)) {
-            maze.SolveMaze();
+            if (!showDFSPath) {
+                maze.SolveMaze();
+                showDFSPath = true;
+            } else {
+                maze.ClearPath();
+                showDFSPath = false;
+            }
         }
         
-        // Phím B: Giải bằng BFS (màu đỏ)
+        // Phím B: Toggle BFS path (màu đỏ)
         if (IsKeyPressed(KEY_B)) {
-            maze.SolveMazeBFS();
-        }
-        
-        // Phím C: Xóa tất cả đường đi
-        if (IsKeyPressed(KEY_C)) {
-            maze.ClearPath();
-            maze.ClearBFSPath();
+            if (!showBFSPath) {
+                maze.SolveMazeBFS();
+                showBFSPath = true;
+            } else {
+                maze.ClearBFSPath();
+                showBFSPath = false;
+            }
         }
         
         maze.UpdatePathAnimation();
@@ -42,13 +55,18 @@ int main() {
         {
             ClearBackground(RAYWHITE);
             maze.Draw(screenWidth, screenHeight);
-            maze.DrawPath(screenWidth, screenHeight);      // DFS - Xanh dương
-            maze.DrawBFSPath(screenWidth, screenHeight);   // BFS - Đỏ
+            
+            // Chỉ vẽ path khi đang bật
+            if (showDFSPath) {
+                maze.DrawPath(screenWidth, screenHeight);      // DFS - Xanh dương
+            }
+            if (showBFSPath) {
+                maze.DrawBFSPath(screenWidth, screenHeight);   // BFS - Đỏ
+            }
             
             DrawText("Press R to generate new maze", 10, 10, 20, DARKGRAY);
-            DrawText("Press S to solve (DFS - Blue)", 10, 35, 20, BLUE);
-            DrawText("Press B to solve (BFS - Red)", 10, 60, 20, RED);
-            DrawText("Press C to clear paths", 10, 85, 20, DARKGRAY);
+            DrawText("Press S to toggle DFS (Blue)", 10, 35, 20, BLUE);
+            DrawText("Press B to toggle BFS (Red)", 10, 60, 20, RED);
         }
         EndDrawing();
     }
