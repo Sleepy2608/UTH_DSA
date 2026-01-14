@@ -48,6 +48,7 @@ int main() {
             }
         }
         
+        maze.UpdateVisitAnimation();    // Animation quá trình duyệt
         maze.UpdatePathAnimation();
         maze.UpdateBFSPathAnimation();
 
@@ -55,6 +56,11 @@ int main() {
         {
             ClearBackground(RAYWHITE);
             maze.Draw(screenWidth, screenHeight);
+            
+            // Vẽ các ô đã duyệt (minh hoạ thuật toán)
+            if (showDFSPath || showBFSPath) {
+                maze.DrawVisitedCells(screenWidth, screenHeight);
+            }
             
             // Chỉ vẽ path khi đang bật
             if (showDFSPath) {

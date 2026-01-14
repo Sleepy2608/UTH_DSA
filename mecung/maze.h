@@ -33,13 +33,26 @@ private:
     vector<vector<Cell>> grid;
     vector<Cell*> path;         // Đường đi DFS
     vector<Cell*> bfsPath;       // Đường đi BFS
+    
+    // Thứ tự duyệt các ô để minh hoạ thuật toán
+    vector<Cell*> dfsVisitOrder;   // Thứ tự duyệt DFS
+    vector<Cell*> bfsVisitOrder;   // Thứ tự duyệt BFS
+    
+    // Animation cho đường đi cuối cùng
     int pathAnimIndex;
-    int bfsPathAnimIndex;        // Animation index cho BFS
+    int bfsPathAnimIndex;
     bool animating;
-    bool bfsAnimating;           // Animation flag cho BFS
+    bool bfsAnimating;
     int animDelay;
     int animCounter;
-    int bfsAnimCounter;          // Animation counter cho BFS
+    int bfsAnimCounter;
+    
+    // Animation cho quá trình duyệt (minh hoạ thuật toán)
+    int dfsVisitAnimIndex;         // Index animation duyệt DFS
+    int bfsVisitAnimIndex;         // Index animation duyệt BFS
+    bool dfsVisitAnimating;        // Đang animate quá trình duyệt DFS
+    bool bfsVisitAnimating;        // Đang animate quá trình duyệt BFS
+    int visitAnimCounter;
 
 public:
     Maze(int rows, int cols);
@@ -50,12 +63,17 @@ public:
     void SolveMazeBFS();         // Giải bằng BFS
     void DrawPath(int screenWidth, int screenHeight);    // Vẽ đường DFS (màu xanh dương)
     void DrawBFSPath(int screenWidth, int screenHeight); // Vẽ đường BFS (màu đỏ)
+    void DrawVisitedCells(int screenWidth, int screenHeight);  // Vẽ các ô đã duyệt (màu vàng)
     void ClearPath();
     void ClearBFSPath();
     void UpdatePathAnimation();
     void UpdateBFSPathAnimation();
+    void UpdateVisitAnimation();   // Cập nhật animation quá trình duyệt
     bool IsAnimating() const { return animating; }
     bool IsBFSAnimating() const { return bfsAnimating; }
+    bool IsVisitAnimating() const { return dfsVisitAnimating || bfsVisitAnimating; }
+    bool IsDFSVisitComplete() const { return !dfsVisitAnimating && dfsVisitAnimIndex >= (int)dfsVisitOrder.size(); }
+    bool IsBFSVisitComplete() const { return !bfsVisitAnimating && bfsVisitAnimIndex >= (int)bfsVisitOrder.size(); }
     
     int GetRows() const { return rows; }
     int GetCols() const { return cols; }

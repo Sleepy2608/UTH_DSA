@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0) {
+Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0), dfsVisitAnimIndex(0), bfsVisitAnimIndex(0), dfsVisitAnimating(false), bfsVisitAnimating(false), visitAnimCounter(0) {
     for (int i = 0; i < rows; ++i) {
         vector<Cell> row;
         for (int j = 0; j < cols; ++j) {
@@ -144,6 +144,7 @@ void Maze::ResetVisited() {
 
 bool Maze::DFS(Cell* cell) {
     cell->visited = true;
+    dfsVisitOrder.push_back(cell);  // Ghi lại thứ tự duyệt
     if (cell->row == rows - 1 && cell->col == cols - 1) {
         path.push_back(cell);
         return true;
@@ -181,10 +182,16 @@ bool Maze::DFS(Cell* cell) {
 void Maze::SolveMaze() {
     ResetVisited();
     path.clear();
+    dfsVisitOrder.clear();  // Xóa thứ tự duyệt cũ
     DFS(&grid[0][0]);
+    // Bắt đầu animation duyệt trước
+    dfsVisitAnimIndex = 0;
+    visitAnimCounter = 0;
+    dfsVisitAnimating = true;
+    // Animation đường đi sẽ bắt đầu sau khi duyệt xong
     pathAnimIndex = 0;
     animCounter = 0;
-    animating = true;
+    animating = false;  // Chưa animate đường đi, đợi duyệt xong
 }
 
 void Maze::DrawPath(int screenWidth, int screenHeight) {
@@ -228,8 +235,11 @@ void Maze::UpdatePathAnimation() {
 
 void Maze::ClearPath() {
     path.clear();
+    dfsVisitOrder.clear();
     pathAnimIndex = 0;
+    dfsVisitAnimIndex = 0;
     animating = false;
+    dfsVisitAnimating = false;
     ResetVisited();
 }
 
@@ -251,6 +261,7 @@ bool Maze::BFSsolve(Cell* start) {
     q.push(start);
     start->visited = true;
     parent[start] = nullptr;
+    bfsVisitOrder.push_back(start);  // Ghi lại ô đầu tiên
     
     while (!q.empty()) {
         Cell* current = q.front(); // Lấy phần tử đầu tiên trong hàng đợi
@@ -278,6 +289,7 @@ bool Maze::BFSsolve(Cell* start) {
                 next->visited = true;
                 parent[next] = current;
                 q.push(next);
+                bfsVisitOrder.push_back(next);  // Ghi lại thứ tự duyệt
             }
         }
         
@@ -288,6 +300,7 @@ bool Maze::BFSsolve(Cell* start) {
                 next->visited = true;
                 parent[next] = current;
                 q.push(next);
+                bfsVisitOrder.push_back(next);  // Ghi lại thứ tự duyệt
             }
         }
         
@@ -298,6 +311,7 @@ bool Maze::BFSsolve(Cell* start) {
                 next->visited = true;
                 parent[next] = current;
                 q.push(next);
+                bfsVisitOrder.push_back(next);  // Ghi lại thứ tự duyệt
             }
         }
         
@@ -308,6 +322,7 @@ bool Maze::BFSsolve(Cell* start) {
                 next->visited = true;
                 parent[next] = current;
                 q.push(next);
+                bfsVisitOrder.push_back(next);  // Ghi lại thứ tự duyệt
             }
         }
     }
@@ -317,10 +332,16 @@ bool Maze::BFSsolve(Cell* start) {
 void Maze::SolveMazeBFS() {
     ResetVisited();
     bfsPath.clear();
+    bfsVisitOrder.clear();  // Xóa thứ tự duyệt cũ
     BFSsolve(&grid[0][0]);
+    // Bắt đầu animation duyệt trước
+    bfsVisitAnimIndex = 0;
+    visitAnimCounter = 0;
+    bfsVisitAnimating = true;
+    // Animation đường đi sẽ bắt đầu sau khi duyệt xong
     bfsPathAnimIndex = 0;
     bfsAnimCounter = 0;
-    bfsAnimating = true;
+    bfsAnimating = false;  // Chưa animate đường đi, đợi duyệt xong
 }
 
 void Maze::DrawBFSPath(int screenWidth, int screenHeight) {
@@ -365,8 +386,11 @@ void Maze::UpdateBFSPathAnimation() {
 
 void Maze::ClearBFSPath() {
     bfsPath.clear();
+    bfsVisitOrder.clear();
     bfsPathAnimIndex = 0;
+    bfsVisitAnimIndex = 0;
     bfsAnimating = false;
+    bfsVisitAnimating = false;
     // Reset inPath
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -374,4 +398,61 @@ void Maze::ClearBFSPath() {
         }
     }
     ResetVisited();
+}
+
+// ==================== Visit Animation ====================
+
+void Maze::DrawVisitedCells(int screenWidth, int screenHeight) {
+    float cellWidth = (float)screenWidth / cols;
+    float cellHeight = (float)screenHeight / rows;
+    
+    // Vẽ các ô đã duyệt DFS (màu vàng nhạt)
+    int dfsLimit = dfsVisitAnimIndex < (int)dfsVisitOrder.size() ? dfsVisitAnimIndex : dfsVisitOrder.size();
+    for (int i = 0; i < dfsLimit; ++i) {
+        Cell* cell = dfsVisitOrder[i];
+        // Không vẽ đè lên ô bắt đầu và ô kết thúc
+        if ((cell->row == 0 && cell->col == 0) || (cell->row == rows - 1 && cell->col == cols - 1)) continue;
+        float x = cell->col * cellWidth;
+        float y = cell->row * cellHeight;
+        DrawRectangle(x + 2, y + 2, cellWidth - 4, cellHeight - 4, ORANGE);  // DFS dùng màu cam
+    }
+    
+    // Vẽ các ô đã duyệt BFS (màu tím nhạt)
+    int bfsLimit = bfsVisitAnimIndex < (int)bfsVisitOrder.size() ? bfsVisitAnimIndex : bfsVisitOrder.size();
+    for (int i = 0; i < bfsLimit; ++i) {
+        Cell* cell = bfsVisitOrder[i];
+        // Không vẽ đè lên ô bắt đầu và ô kết thúc
+        if ((cell->row == 0 && cell->col == 0) || (cell->row == rows - 1 && cell->col == cols - 1)) continue;
+        float x = cell->col * cellWidth;
+        float y = cell->row * cellHeight;
+        DrawRectangle(x + 2, y + 2, cellWidth - 4, cellHeight - 4, PINK);  // BFS dùng màu hồng
+    }
+}
+
+void Maze::UpdateVisitAnimation() {
+    // Update DFS visit animation
+    if (dfsVisitAnimating && dfsVisitAnimIndex < (int)dfsVisitOrder.size()) {
+        visitAnimCounter++;
+        if (visitAnimCounter >= animDelay) {
+            dfsVisitAnimIndex++;
+            visitAnimCounter = 0;
+        }
+    } else if (dfsVisitAnimating) {
+        // Duyệt xong, bắt đầu vẽ đường đi
+        dfsVisitAnimating = false;
+        animating = true;
+    }
+    
+    // Update BFS visit animation
+    if (bfsVisitAnimating && bfsVisitAnimIndex < (int)bfsVisitOrder.size()) {
+        visitAnimCounter++;
+        if (visitAnimCounter >= animDelay) {
+            bfsVisitAnimIndex++;
+            visitAnimCounter = 0;
+        }
+    } else if (bfsVisitAnimating) {
+        // Duyệt xong, bắt đầu vẽ đường đi
+        bfsVisitAnimating = false;
+        bfsAnimating = true;
+    }
 }
