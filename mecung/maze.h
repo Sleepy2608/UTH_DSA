@@ -31,6 +31,8 @@ private:
     int rows;
     int cols;
     vector<vector<Cell>> grid;
+    unsigned int currentSeed;    // Seed hiện tại
+    int generationStep;          // Bước tạo mê cung: 0=chưa, 1=DFS done, 2=xoá tường done
     vector<Cell*> path;         // Đường đi DFS
     vector<Cell*> bfsPath;       // Đường đi BFS
     
@@ -56,7 +58,13 @@ private:
 
 public:
     Maze(int rows, int cols);
-    void GenerateMaze();
+    void GenerateMaze();           // Tạo toàn bộ (cả 2 bước)
+    void SetSeed(unsigned int seed);  // Đặt seed mới
+    void GenerateMazeStep1();       // Bước 1: Tạo mê cung bằng DFS
+    void GenerateMazeStep2();       // Bước 2: Xoá bớt tường
+    void ResetMaze();               // Reset lưới về trạng thái ban đầu
+    unsigned int GetCurrentSeed() const { return currentSeed; }
+    int GetGenerationStep() const { return generationStep; }
     void ResetVisited();
     void Draw(int screenWidth, int screenHeight);
     void SolveMaze();           // Giải bằng DFS

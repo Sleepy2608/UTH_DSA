@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0), dfsVisitAnimIndex(0), bfsVisitAnimIndex(0), dfsVisitAnimating(false), bfsVisitAnimating(false), visitAnimCounter(0) {
+Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0), dfsVisitAnimIndex(0), bfsVisitAnimIndex(0), dfsVisitAnimating(false), bfsVisitAnimating(false), visitAnimCounter(0), currentSeed(0), generationStep(0) {
     for (int i = 0; i < rows; ++i) {
         vector<Cell> row;
         for (int j = 0; j < cols; ++j) {
@@ -10,10 +10,59 @@ Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(
         }
         grid.push_back(row);
     }
-    srand(time(nullptr));
+    // Khởi tạo seed ngẫu nhiên
+    currentSeed = (unsigned int)time(nullptr);
+    srand(currentSeed);
+}
+
+void Maze::SetSeed(unsigned int seed) {
+    currentSeed = seed;
+    srand(currentSeed);
+    generationStep = 0;
+}
+
+void Maze::ResetMaze() {
+    // Reset tất cả các ô về trạng thái ban đầu
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            grid[i][j].visited = false;
+            grid[i][j].inPath = false;
+            grid[i][j].walls[0] = true;
+            grid[i][j].walls[1] = true;
+            grid[i][j].walls[2] = true;
+            grid[i][j].walls[3] = true;
+        }
+    }
+    // Reset path và animation
+    path.clear();
+    bfsPath.clear();
+    dfsVisitOrder.clear();
+    bfsVisitOrder.clear();
+    pathAnimIndex = 0;
+    bfsPathAnimIndex = 0;
+    animating = false;
+    bfsAnimating = false;
+    dfsVisitAnimIndex = 0;
+    bfsVisitAnimIndex = 0;
+    dfsVisitAnimating = false;
+    bfsVisitAnimating = false;
+    generationStep = 0;
 }
 
 void Maze::GenerateMaze() {
+    // Reset và set seed trước khi tạo
+    srand(currentSeed);
+    ResetMaze();
+    GenerateMazeStep1();
+    GenerateMazeStep2();
+}
+
+void Maze::GenerateMazeStep1() {
+    // Bước 1: Tạo mê cung bằng DFS
+    if (generationStep >= 1) return; // Đã thực hiện rồi
+    
+    srand(currentSeed); // Đảm bảo seed đúng
+    
     stack<Cell*> stack;
     Cell* current = &grid[0][0];
     current->visited = true;
@@ -32,9 +81,20 @@ void Maze::GenerateMaze() {
         }
     }
 
+    // Mở lối vào và lối ra
     grid[0][0].walls[0] = false;
     grid[rows - 1][cols - 1].walls[2] = false;
     
+    generationStep = 1;
+    ResetVisited(); // Reset visited để chuẩn bị cho solving
+}
+
+void Maze::GenerateMazeStep2() {
+    // Bước 2: Xoá bớt tường để tạo nhiều đường đi
+    if (generationStep < 1) return; // Chưa chạy bước 1
+    if (generationStep >= 2) return; // Đã thực hiện rồi
+    
+    // Tiếp tục sequence ngẫu nhiên từ seed (sau bước 1)
     int extraWallsToRemove = (rows * cols) / 10;
     for (int i = 0; i < extraWallsToRemove; ++i) {
         int r = rand() % rows;
@@ -55,6 +115,8 @@ void Maze::GenerateMaze() {
             grid[r][c - 1].walls[1] = false;
         }
     }
+    
+    generationStep = 2;
 }
 
 void Maze::Draw(int screenWidth, int screenHeight) {
