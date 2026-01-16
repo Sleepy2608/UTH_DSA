@@ -2,7 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
-Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0), dfsVisitAnimIndex(0), bfsVisitAnimIndex(0), dfsVisitAnimating(false), bfsVisitAnimating(false), visitAnimCounter(0) {
+Maze::Maze(int r, int c) : rows(r), cols(c), pathAnimIndex(0), bfsPathAnimIndex(0), animating(false), bfsAnimating(false), animDelay(3), animCounter(0), bfsAnimCounter(0), 
+                           dfsVisitAnimIndex(0), bfsVisitAnimIndex(0), dfsVisitAnimating(false), bfsVisitAnimating(false), visitAnimCounter(0) {
     for (int i = 0; i < rows; ++i) {
         vector<Cell> row;
         for (int j = 0; j < cols; ++j) {
