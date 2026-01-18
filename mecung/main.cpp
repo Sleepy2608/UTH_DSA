@@ -8,8 +8,10 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "Maze Solver - Raylib");
 
-    Maze maze(10, 10);
-    maze.GenerateMaze();
+    int inputIdx = 0;
+    cout << "Nhap input: ";
+    cin >> inputIdx;
+    Maze maze(inputIdx, inputIdx);
 
     SetTargetFPS(60);
 
