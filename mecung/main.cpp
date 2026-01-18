@@ -3,17 +3,18 @@
 #include <iostream>
 
 int main() {
-    int mazeWidth, mazeHeight;
-    cout << "Nhap chieu cao maze: ";
-    cin >> mazeHeight;
-    cout << "Nhap chieu dai maze: ";
-    cin >> mazeWidth;
+    int inputIdx = 0;
+    do{
+        cout << "Nhap kich thuoc me cung (>= 10): ";
+        cin >> inputIdx;
+    }while(inputIdx < 10);
+
     const int screenHeight = 600;
-    const int screenWidth = (int)(600.0 * mazeHeight / mazeWidth);
+    const int screenWidth = (int)(600.0 * inputIdx / inputIdx);
 
     InitWindow(screenWidth, screenHeight, "Maze Solver - Raylib");
 
-    Maze maze(mazeWidth, mazeHeight);
+    Maze maze(inputIdx, inputIdx);
     maze.GenerateMaze();
 
     SetTargetFPS(60);
