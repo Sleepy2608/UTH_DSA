@@ -25,7 +25,7 @@ int main() {
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_R)) {
-            maze = Maze(mazeWidth, mazeHeight); 
+            maze = Maze(inputIdx, inputIdx); 
             maze.GenerateMaze();
             // Reset toggle khi tạo maze mới
             showDFSPath = false;
