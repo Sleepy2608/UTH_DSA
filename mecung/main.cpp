@@ -8,7 +8,13 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "Maze Solver - Raylib");
 
-    Maze maze(10, 10);
+    int inputIdx = 0;
+    do{
+        cout << "Nhap kich thuoc me cung (>= 10): ";
+        cin >> inputIdx;
+    }while(inputIdx < 10);
+    
+    Maze maze(inputIdx, inputIdx);
     maze.GenerateMaze();
 
     SetTargetFPS(60);
