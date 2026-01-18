@@ -3,12 +3,17 @@
 #include <iostream>
 
 int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 800;
+    int mazeWidth, mazeHeight;
+    cout << "Nhap chieu cao maze: ";
+    cin >> mazeHeight;
+    cout << "Nhap chieu dai maze: ";
+    cin >> mazeWidth;
+    const int screenHeight = 600;
+    const int screenWidth = (int)(600.0 * mazeHeight / mazeWidth);
 
     InitWindow(screenWidth, screenHeight, "Maze Solver - Raylib");
 
-    Maze maze(10, 10);
+    Maze maze(mazeWidth, mazeHeight);
     maze.GenerateMaze();
 
     SetTargetFPS(60);
@@ -19,7 +24,7 @@ int main() {
 
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_R)) {
-            maze = Maze(10, 10); 
+            maze = Maze(mazeWidth, mazeHeight); 
             maze.GenerateMaze();
             // Reset toggle khi tạo maze mới
             showDFSPath = false;
